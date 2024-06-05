@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Booking</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+</head>
+<body>
+    <div class="container">
+        <form id="bookingForm">
+            <label for="roomSelect">Select Room:</label>
+            <select id="roomSelect">
+                <option value="room1">Room 1</option>
+                <option value="room2">Room 2</option>
+                <option value="room3">Room 3</option>
+            </select>
+
+            <label for="dateTimePicker">Select Date and Time:</label>
+            <input type="text" id="dateTimePicker" placeholder="Select Date and Time">
+
+            <button type="submit">Book Room</button>
+        </form>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const dateTimePicker = flatpickr("#dateTimePicker", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+
+        const bookingForm = document.getElementById('bookingForm');
+
+        bookingForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const selectedRoom = document.getElementById('roomSelect').value;
+            const selectedDateTime = dateTimePicker.input.value;
+
+            const response = await fetch('http://localhost:3000/book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ room: selectedRoom, dateTime: selectedDateTime })
+            });
+
+            if (response.status === 200) {
+                alert('Room booked successfully!');
+            } else {
+                const errorText = await response.text();
+                alert(errorText);
+            }
+        });
+    });
+    </script>
+</body>
+</html>
