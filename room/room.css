@@ -1,0 +1,25 @@
+#floorplan {
+    display: flex;
+    flex-wrap: wrap;
+    width: 600px;
+    border: 1px solid #000;
+}
+
+.room {
+    flex: 1 0 30%;
+    margin: 10px;
+    padding: 20px;
+    border: 1px solid #000;
+    text-align: center;
+    cursor: pointer;
+    background-color: #fff;
+}
+
+.room.highlighted {
+    background-color: yellow;
+}
+
+.room.reserved {
+    background-color: red;
+    pointer-events: none;
+}
