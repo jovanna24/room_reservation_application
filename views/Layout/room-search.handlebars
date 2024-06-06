@@ -7,13 +7,24 @@
   </head>
   <body>
     <div>
+      <h3 class="room-filter-title">Room Filter</h3>
       {{room-filter}}
     </div>
+
     <section class="container">
-      {{#each room as | room}}
-        {{> room-details}}
-      {{/each}}
+      <form id="bookingform">
+        <label for="roomSelect">Select Room</label>
+        <select id="roomSelect">
+          {{#each room as | room}}
+            {{> room-details}}
+          {{/each}}
+        </select>
+      </form>
+      <div class="room-info-sidebar">
+        {{room-info-card}}
+      </div>
     </section>
+    
     <div>
       <label for="dateTimePicker">
         Select Date and Time:
