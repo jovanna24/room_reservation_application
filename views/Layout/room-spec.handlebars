@@ -1,0 +1,24 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{room-spec-page}}</title>
+  </head>
+  <body>
+    <div class="room-card-layout">
+      <section>
+        {{admin-settings-tools}}
+      </section>
+      <section class="room-card">
+        {{room-info-card}}
+        {{event-info}}
+      </section>
+    </div>
+    <div>
+      <!-- we can put the res controls here as a template literal if needed -->
+      {{reservation-tool}}
+    </div>
+
+  </body>
+</html>

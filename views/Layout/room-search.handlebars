@@ -10,10 +10,14 @@
       {{room-filter}}
     </div>
     <section class="container">
-      {{room-list}}
+      {{#each room as | room}}
+        {{> room-details}}
+      {{/each}}
     </section>
     <div>
-      <label for="dateTimePicker">Select Date and Time:</label>
+      <label for="dateTimePicker">
+        Select Date and Time:
+      </label>
 
       <input
         type="text"
