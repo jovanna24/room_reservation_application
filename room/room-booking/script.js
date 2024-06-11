@@ -29,6 +29,11 @@ document.addEventListener('DOMContentLoaded', async function() {
         option.value = room.id;
         option.textContent = room.name;
         selectedRoomInput.appendChild(option);
+
+        area.addEventListener('click', function(event) {
+            event.preventDefault();
+            highlightRoom(room.id);
+        });
     });
 
     selectedRoomInput.addEventListener('change', function() {
@@ -58,7 +63,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         highlightDiv.style.top = `${(topPercent / 100) * imgRect.height}px`;
         highlightDiv.style.width = `${(widthPercent / 100) * imgRect.width}px`;
         highlightDiv.style.height = `${(heightPercent / 100) * imgRect.height}px`;
-        highlightDiv.style.position = 'absolute';
         document.querySelector('.floor-plan-container').appendChild(highlightDiv);
 
         selectedRoomInput.value = selectedRoom;
@@ -116,7 +120,7 @@ document.addEventListener('DOMContentLoaded', async function() {
             return;
         }
 
-        const selectedDateTime = `${selectedDate} ${selectedTime}`;
+        const selectedDateTime = `${selectedDate} ${selectedTime.split(' - ')[0]}`;
 
         showLoading(true);
         try {

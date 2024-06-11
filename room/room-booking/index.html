@@ -11,53 +11,90 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
             background-color: #f0f0f0;
         }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: #4CAF50;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .header-login button {
+            padding: 10px 20px;
+            background-color: white;
+            border: none;
+            border-radius: 5px;
+            color: #4CAF50;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .header-login button:hover {
+            background-color: #f1f1f1;
+        }
+
         .container {
             width: 90%;
             max-width: 800px;
+            margin: 20px auto;
             background-color: #fff;
             padding: 20px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
             border-radius: 8px;
         }
+
         .floor-plan-container {
             position: relative;
             max-width: 100%;
         }
+
         .floor-plan-container img {
             width: 100%;
             height: auto;
         }
+
         .booking-form {
             margin-top: 20px;
         }
+
         .highlight {
             position: absolute;
             background-color: rgba(255, 255, 0, 0.5);
             border: 2px solid yellow;
             pointer-events: none;
         }
+
         .error-message {
             color: red;
             margin-top: 10px;
         }
+
         .success-message {
             color: green;
             margin-top: 10px;
         }
+
         .loading {
             display: none;
             margin-top: 10px;
         }
+
         .loading.visible {
             display: block;
         }
+
         @media (max-width: 600px) {
             .container {
                 padding: 15px;
@@ -66,9 +103,15 @@
     </style>
 </head>
 <body>
+    <header>
+        <div class="header-title">Room Booker</div>
+        <div class="header-login">
+            <button onclick="window.location.href='login.html'">Log In</button>
+        </div>
+    </header>
     <div class="container">
         <div class="floor-plan-container">
-            <img src="floor-plan.jpg" usemap="#floorplan" alt="Floor Plan">
+            <img id="floorPlanImage" src="floor-plan.jpg" usemap="#floorplan" alt="Floor Plan">
             <map name="floorplan">
                 <!-- Add areas dynamically -->
             </map>
@@ -145,6 +188,11 @@
             option.value = room.id;
             option.textContent = room.name;
             selectedRoomInput.appendChild(option);
+
+            area.addEventListener('click', function(event) {
+                event.preventDefault();
+                highlightRoom(room.id);
+            });
         });
 
         selectedRoomInput.addEventListener('change', function() {
@@ -174,7 +222,6 @@
             highlightDiv.style.top = `${(topPercent / 100) * imgRect.height}px`;
             highlightDiv.style.width = `${(widthPercent / 100) * imgRect.width}px`;
             highlightDiv.style.height = `${(heightPercent / 100) * imgRect.height}px`;
-            highlightDiv.style.position = 'absolute';
             document.querySelector('.floor-plan-container').appendChild(highlightDiv);
 
             selectedRoomInput.value = selectedRoom;
@@ -232,7 +279,7 @@
                 return;
             }
 
-            const selectedDateTime = `${selectedDate} ${selectedTime}`;
+            const selectedDateTime = `${selectedDate} ${selectedTime.split(' - ')[0]}`;
 
             showLoading(true);
             try {
@@ -276,6 +323,11 @@
 
         function showLoading(isLoading) {
             loadingIndicator.classList.toggle('visible', isLoading);
+        }
+
+        async function fetchRooms() {
+            const response = await fetch('http://localhost:3000/rooms');
+            return response.json();
         }
 
         window.addEventListener('resize', () => {
