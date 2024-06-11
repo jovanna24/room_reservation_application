@@ -1,0 +1,47 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Room booking page</title>
+  </head>
+  <body>
+    <div>
+      <h3 class="room-filter-title">Room Filter</h3>
+      {{room-filter}}
+    </div>
+
+    <section class="container">
+      <form id="bookingform">
+        <label for="roomSelect">Select Room</label>
+        <select id="roomSelect">
+          {{#each room as | room}}
+            {{> room-details}}
+          {{/each}}
+        </select>
+      </form>
+      <div class="room-info-sidebar">
+        {{room-info-card}}
+      </div>
+    </section>
+    
+    <div>
+      <label for="dateTimePicker">
+        Select Date and Time:
+      </label>
+
+      <input
+        type="text"
+        id="dateTimePicker"
+        placeholder="Select Date and Time"
+      />
+
+      <button type="submit">Book Room</button>
+    </div>
+    <script>
+      {{calander-tech}}
+
+      {{book-btn-tech}}
+    </script>
+  </body>
+</html>
