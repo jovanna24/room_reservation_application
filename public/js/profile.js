@@ -1,4 +1,4 @@
-document.addEventListener('DONContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const newFormHandler = async (event) => {
         event.preventDefault(); 
 
@@ -7,7 +7,7 @@ document.addEventListener('DONContentLoaded', () => {
 
         if(reserver && room_number) {
             const response = await fetch('/api/placeholder',{
-                method: "Reservation", 
+                method: "POST", 
                 body: JSON.stringify({ reserver, room_number }),  
                 headers: {
                     'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ document.addEventListener('DONContentLoaded', () => {
     }; 
 
     const delButtonHandler = async (event) => {
-        if (event.target.hasAttribute('data-id')); 
+        if (event.target.hasAttribute('data-id')){ 
             const id = event.target.getAttribute('data-id'); 
 
             const response = await fetch(`/api/placeholder/${id}`, {
@@ -34,6 +34,7 @@ document.addEventListener('DONContentLoaded', () => {
             } else {
                 alert('Failed to cancel reservation!');
             }
+        }
     };
 
     const newReservationForm = document.querySelector('.new-reservation-form');
@@ -45,39 +46,25 @@ document.addEventListener('DONContentLoaded', () => {
     if (reservationList) {
         reservationList.addEventListener('click', delButtonHandler);
     }
-    var t = Handlebars.compile($('#template-row').html());
-    var $html = $(t());
-
-    function changeDate(){
-    $html.find('.datePicker').datepicker({  
-        minDate: minimumDate("2018-08-10"),
-        maxDate: minimumDate("2018-08-15"),
-    });
-    }
-
-
-    $html.find('.datePicker').datepicker({  
-    dateFormat: "d MM yy",
-    minDate: minimumDate("2018-06-04"),
-    maxDate: minimumDate("2023-07-20"),
-    });
-    $('body').append($html);
-
+    const templateSource = document.getElementById('template-row').innerHTML;
+    const template = Handlebars.compile(templateSource);
+    const $html = $(template());
 
     function minimumDate(minDate) {
-        var date = new Date(minDate);
-        if (date < Date.now()) {
-            return new Date(Date.now());
-        } else {
-            return date;
-        }
+        const date = new Date(minDate);
+        return date < Date.now() ? new Date(Date.now()) : date;
     }
 
     function maximumDate(maxDate) {
-        var date = new Date(maxDate);
-        if (date < Date.now()) {
-        } else {
-            return date;
-        }
+        const date = new Date(maxDate);
+        return date < Date.now() ? new Date(Date.now()) : date;
     }
+
+    $html.find('.datePicker').datepicker({  
+        dateFormat: "d MM yy",
+        minDate: minimumDate("2018-06-04"),
+        maxDate: maximumDate("2028-07-20"),
+    });
+
+    $('body').append($html);
 });
