@@ -60,7 +60,7 @@ document.addEventListener('DONContentLoaded', () => {
         $html.find('.datePicker').datepicker({  
         dateFormat: "d MM yy",
         minDate: minimumDate("2018-06-04"),
-        maxDate: minimumDate("2018-07-20"),
+        maxDate: minimumDate("2030-07-20"),
         });
         $('body').append($html);
 
