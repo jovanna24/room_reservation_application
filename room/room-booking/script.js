@@ -13,7 +13,22 @@ document.addEventListener("DOMContentLoaded", async function () {
   let selectedRoom = null;
   let highlightDiv = null;
 
-  const rooms = await fetchRooms();
+    const rooms = [
+        { id: 'office116', name: 'Office 116', coords: '57.5,32.2,15,17' },
+        { id: 'office115', name: 'Office 115', coords: '57.7,50,15,18' },
+        { id: 'conferenceRoom', name: 'Conference Room', coords: '27.1,32.2,19.6,35.5' },
+        { id: 'office112', name: 'Office 112', coords: '6.5,43,14.5,17' },
+        { id: 'office111', name: 'Office 111', coords: '6.5,25,14.5,17.7' },
+        { id: 'office110', name: 'Office 110', coords: '6.5,6.6,22.5,18' },
+        { id: 'office109', name: 'Office 109', coords: '29.6,6.6,17.3,18' },
+        { id: 'office108', name: 'Office 108', coords: '47.4,6.6,19,18' },
+        { id: 'office107', name: 'Office 107', coords: '73,6.6,12,18' },
+        { id: 'office106', name: 'Office 106', coords: '79,25,14,27' },
+        { id: 'office105', name: 'Office 105', coords: '79,52,14,21.2' },
+        { id: 'office104', name: 'Office 104', coords: '76.6,74,17,19.3' },
+        { id: 'office103', name: 'Office 103', coords: '52,75,24,18' },
+        { id: 'office102', name: 'Office 102', coords: '27.1,75,24,18' },
+    ];
 
   const floorplanMap = document.querySelector('map[name="floorplan"]');
   rooms.forEach((room) => {
@@ -83,31 +98,28 @@ document.addEventListener("DOMContentLoaded", async function () {
       return;
     }
 
-    showLoading(true);
-    try {
-      const response = await fetch(
-        `http://localhost:3000/available?room=${selectedRoom}&date=${selectedDate}`
-      );
-      if (!response.ok) {
-        throw new Error("Failed to fetch available times.");
-      }
-      const availableTimes = await response.json();
+        showLoading(true);
+        try {
+            const response = await fetch(`http://localhost:3000/available?room=${selectedRoom}&date=${selectedDate}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch available times.');
+            }
+            const availableTimes = await response.json();
 
-      availableTimesSelect.innerHTML =
-        '<option value="">Select a time</option>';
-      availableTimes.forEach((time) => {
-        const option = document.createElement("option");
-        option.value = time;
-        option.textContent = time;
-        availableTimesSelect.appendChild(option);
-      });
-      clearMessages();
-    } catch (error) {
-      showError("Failed to fetch available times.");
-    } finally {
-      showLoading(false);
-    }
-  });
+            availableTimesSelect.innerHTML = '<option value="">Select a time</option>';
+            availableTimes.forEach(time => {
+                const option = document.createElement('option');
+                option.value = time;
+                option.textContent = time;
+                availableTimesSelect.appendChild(option);
+            });
+            clearMessages();
+        } catch (error) {
+            showError('Failed to fetch available times.');
+        } finally {
+            showLoading(false);
+        }
+    });
 
   bookingForm.addEventListener("submit", async function (event) {
     event.preventDefault();
@@ -144,20 +156,20 @@ document.addEventListener("DOMContentLoaded", async function () {
         }),
       });
 
-      if (response.status === 200) {
-        showSuccess("Room booked successfully!");
-      } else if (response.status === 400) {
-        const errorText = await response.text();
-        showError(errorText);
-      } else {
-        showError("An unknown error occurred.");
-      }
-    } catch (error) {
-      showError("Failed to book the room. Please try again.");
-    } finally {
-      showLoading(false);
-    }
-  });
+            if (response.status === 200) {
+                showSuccess('Room booked successfully!');
+            } else if (response.status === 400) {
+                const errorText = await response.text();
+                showError(errorText);
+            } else {
+                showError('An unknown error occurred.');
+            }
+        } catch (error) {
+            showError('Failed to book the room. Please try again.');
+        } finally {
+            showLoading(false);
+        }
+    });
 
   function showError(message) {
     errorMessageDiv.textContent = message;
