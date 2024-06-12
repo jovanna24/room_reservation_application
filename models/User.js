@@ -36,7 +36,7 @@ User.init(
       },
     },
     admin: {
-      type: boolean,
+      type: DataTypes.BOOLEAN, 
       allowNull: false,
       defaultValue: false,
     },
