@@ -3,7 +3,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{room.room-spec}}</title>
+    <title>{{room.room_number}}</title>
   </head>
   <body>
     <div class="room-card-layout">
@@ -11,8 +11,12 @@
         {{admin-settings-tools}}
       </section>
       <section class="room-card">
-        {{room-info-card}}
-        {{event-info}}
+        {{room.room_number}}
+        {{room.available_resources}}
+        {{room.room_capacity}}
+        {{event.info}}
+        {{event.host}}
+        {{event.host.contact}}
       </section>
     </div>
     <div class="reservation-tool-ui">
