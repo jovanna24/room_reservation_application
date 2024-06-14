@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const room_number = document.querySelector('#room-number').value.trim(); 
 
         if(reserver && room_number) {
-            const response = await fetch('/api/placeholder',{
+            const response = await fetch('/api/event-route',{
                 method: "POST", 
                 body: JSON.stringify({ reserver, room_number }),  
                 headers: {

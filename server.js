@@ -54,5 +54,5 @@ sequelize.sync({ force: false }).then(() => {
     console.error('Unable to sync database: ', err);
 });
 
-const mailRoutes = require('./controllers/userController'); // Adjust the path as necessary
+const mailRoutes = require('./controllers/api/userRoutes'); 
 app.use('/user', mailRoutes);

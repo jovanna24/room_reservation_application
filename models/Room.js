@@ -20,7 +20,7 @@ Room.init(
             type: DataTypes.STRING, 
         },
         room_capacity: {
-            type: DataTypes.NUMBER, 
+            type: DataTypes.INTEGER, 
             allowNull: false,
         },
     }, 
