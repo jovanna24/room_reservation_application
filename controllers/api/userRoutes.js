@@ -3,7 +3,7 @@ const { User } = require('../../models');
 const sendMail = require('../../utils/mailer');
 
 // route for user registration
-router.post('/', async (req, res) => {
+router.post('/users', async (req, res) => {
     try {
         const userData = await User.create(req.body);
 
