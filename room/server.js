@@ -2,40 +2,25 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
-const mongoose = require("mongoose");
 const session = require("express-session");
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
+const fs = require("fs");
+const util = require("util");
 
 const app = express();
 const port = 3000;
 
-// Connect to MongoDB
-mongoose.connect("mongodb://localhost/room_booking", {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const readFile = util.promisify(fs.readFile);
+const writeFile = util.promisify(fs.writeFile);
 
-const userSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-  email: String,
-});
-
-const bookingSchema = new mongoose.Schema({
-  room: String,
-  dateTime: String,
-  username: String,
-  email: String,
-});
-
-const User = mongoose.model("User", userSchema);
-const Booking = mongoose.model("Booking", bookingSchema);
+const USERS_FILE = "users.json";
+const BOOKINGS_FILE = "bookings.json";
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));  // Serve static files
 
 app.use(
   session({
@@ -50,7 +35,8 @@ app.use(passport.session());
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
-    const user = await User.findOne({ username });
+    const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
+    const user = users.find(user => user.username === username);
     if (!user) return done(null, false, { message: "Incorrect username." });
     const match = await bcrypt.compare(password, user.password);
     if (!match) return done(null, false, { message: "Incorrect password." });
@@ -58,16 +44,20 @@ passport.use(
   })
 );
 
-passport.serializeUser((user, done) => done(null, user.id));
-passport.deserializeUser((id, done) => {
-  User.findById(id, (err, user) => done(err, user));
+passport.serializeUser((user, done) => done(null, user.username));
+passport.deserializeUser(async (username, done) => {
+  const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
+  const user = users.find(user => user.username === username);
+  done(null, user);
 });
 
 app.post("/register", async (req, res) => {
   const { username, password, email } = req.body;
+  const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
   const hash = await bcrypt.hash(password, 10);
-  const newUser = new User({ username, password: hash, email });
-  await newUser.save();
+  const newUser = { username, password: hash, email };
+  users.push(newUser);
+  await writeFile(USERS_FILE, JSON.stringify(users, null, 2));
   res.send("User registered");
 });
 
@@ -93,21 +83,21 @@ app.post("/book", async (req, res) => {
     return res.status(400).send("Room and dateTime are required.");
   }
 
-  const existingBooking = await Booking.findOne({ room, dateTime });
+  const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
+  const existingBooking = bookings.find(booking => booking.room === room && booking.dateTime === dateTime);
   if (existingBooking) {
-    return res
-      .status(400)
-      .send("Room is already booked for the selected date and time.");
+    return res.status(400).send("Room is already booked for the selected date and time.");
   }
 
-  const newBooking = new Booking({ room, dateTime, username, email });
-  await newBooking.save();
+  const newBooking = { room, dateTime, username, email };
+  bookings.push(newBooking);
+  await writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
 
   res.send("Room booked successfully.");
 });
 
 app.get("/bookings", async (req, res) => {
-  const bookings = await Booking.find();
+  const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
   res.send(bookings);
 });
 
@@ -117,11 +107,9 @@ app.get("/available", async (req, res) => {
     return res.status(400).send("Room and date are required");
   }
 
-  const bookings = await Booking.find({
-    room,
-    dateTime: { $regex: `^${date}` },
-  });
-  const bookedTimes = bookings.map((booking) => booking.dateTime.split(" ")[1]);
+  const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
+  const filteredBookings = bookings.filter(booking => booking.room === room && booking.dateTime.startsWith(date));
+  const bookedTimes = filteredBookings.map(booking => booking.dateTime.split(" ")[1]);
 
   const startHour = 7;
   const endHour = 19;
@@ -130,7 +118,7 @@ app.get("/available", async (req, res) => {
 
   for (let hour = startHour; hour <= endHour; hour++) {
     const startTime = `${hour < 10 ? "0" : ""}${hour}:00`;
-    const endTime = `${hour < 10 ? "0" : ""}${hour}:50`;
+    const endTime = `${hour < 10 ? "0" : ""}${hour}:50}`;
     const timeSlot = `${startTime} - ${endTime}`;
     if (!bookedTimes.includes(startTime)) {
       allTimes.push(timeSlot);
@@ -144,11 +132,7 @@ app.get("/rooms", (req, res) => {
   const rooms = [
     { id: "office116", name: "Office 116", coords: "57.5,32.2,15,17" },
     { id: "office115", name: "Office 115", coords: "57.7,50,15,18" },
-    {
-      id: "conferenceRoom",
-      name: "Conference Room",
-      coords: "27.1,32.2,19.6,35.5",
-    },
+    { id: "conferenceRoom", name: "Conference Room", coords: "27.1,32.2,19.6,35.5" },
     { id: "office112", name: "Office 112", coords: "6.5,43,14.5,17" },
     { id: "office111", name: "Office 111", coords: "6.5,25,14.5,17.7" },
     { id: "office110", name: "Office 110", coords: "6.5,6.6,22.5,18" },
@@ -169,6 +153,11 @@ app.get("/shutdown", (req, res) => {
   server.close(() => {
     console.log("Server closed");
   });
+});
+
+// Add a root route handler to serve the index.html file
+app.get("/", (req, res) => {
+  res.sendFile(path.join("D:/group project 1/room_reservation_application/room/room-booking/index.html"));
 });
 
 // Start the server
