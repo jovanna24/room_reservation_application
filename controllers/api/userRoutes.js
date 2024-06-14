@@ -3,20 +3,27 @@ const { User } = require('../../models');
 const sendMail = require('../../utils/mailer');
 
 // route for user registration
-router.post('/users', async (req, res) => {
+router.post('/', async (req, res) => { 
+    const { name, email, password } = req.body;
+
     try {
-        const userData = await User.create(req.body);
-
-        req.session.save(()=> {
-            req.session.user_id = userData.id;
-            req.session.logged_in = true;
-
-            res.status(200).json(userData);
+        // check if user already exisits 
+        const existingUser = await User.findOne({ where: { email }}); 
+        if (existingUser) {
+            return res.status(400).json({ error: 'Email already exists'});
+        } 
+        // creates a new user
+        const newUser = await User.create({
+            name, 
+            email, 
+            password, 
+            admin: false
         }); 
-    } catch (err) { 
-        console.error(err);
-        res.status(400).json(err);
-    }
+        res.status(201).json(newUser);
+        } catch (error) {
+            console.error('Error creating user: ', error); 
+            res.status(500).json({ error: 'Internal server error' });
+        }
 }); 
 // route for user login
 router.post('/login', async (req, res) => {

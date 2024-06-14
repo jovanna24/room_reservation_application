@@ -5,6 +5,7 @@ const loginFormHandler = async (event) => {
   const password = document.querySelector('#password-login').value.trim();
 
   if (email && password) {
+    try{
 
     const response = await fetch('/api/users/login', {
       method: 'POST',
@@ -13,11 +14,16 @@ const loginFormHandler = async (event) => {
     });
 
     if (response.ok) {
-      document.location.replace('/profile');
+      document.location.replace('/events');
     } else {
+      const result = await response.json();
       alert(response.statusText);
     }
+  } catch (error) {
+    console.error('Error: ', error);
+    alert('Failed to log in');
   }
+}
 };
 
 const signupFormHandler = async (event) => {
@@ -27,7 +33,8 @@ const signupFormHandler = async (event) => {
   const email = document.querySelector('#email-signup').value.trim();
   const password = document.querySelector('#password-signup').value.trim();
 
-  if (name && email && password) {
+  if (name && email && password) { 
+    try {
     const response = await fetch('/api/users', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
@@ -35,11 +42,16 @@ const signupFormHandler = async (event) => {
     });
 
     if (response.ok) {
-      document.location.replace('/event-form');
+      document.location.replace('/events');
     } else {
-      alert(response.statusText);
+      const result = await response.json();
+      alert(result.error || response.statusText);
     }
+  } catch (error) {
+    console.error ('Error: ', error); 
+    alert('Failed to sign up!');
   }
+}
 };
 
 document
