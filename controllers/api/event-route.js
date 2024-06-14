@@ -19,4 +19,6 @@ router.post("/event-form", async (req, res) => {
       .status(500)
       .json({ error: "An error occured while creating the event" });
   }
-});
+}); 
+
+module.exports = router;

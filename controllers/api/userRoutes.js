@@ -1,6 +1,6 @@
 const router = require('express').Router(); 
 const { User } = require('../../models'); 
-const sendMail = require('../utils/mailer');
+const sendMail = require('../../utils/mailer');
 
 // route for user registration
 router.post('/', async (req, res) => {
@@ -50,23 +50,21 @@ router.post('/login', async (req, res) => {
 });
 
 // route for sending an email
-    router.post('/send-email', async (req, res) => {
-        try {
-          await sendMail({
-            from: '', // sender address
-            to: "", // list of receivers
-            subject: "Hello ✔", // Subject line
-            text: "Hello world?", // plain text body
-            html: "<b>Hello world?</b>", // html body
-          });
-      
-          res.send('Email sent successfully!');
-        } catch (error) {
-          console.error('Error sending email:', error);
-          res.status(500).send('Error sending email');
-        }
-     
-    
+router.post('/send-email', async (req, res) => {
+    try {
+        await sendMail({
+            from: 'sender@example.com', // Replace with valid sender email address
+            to: 'receiver@example.com', // Replace with valid receiver email address
+            subject: "Hello ✔",
+            text: "Hello world?",
+            html: "<b>Hello world?</b>",
+        });
+
+        res.send('Email sent successfully!');
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).send('Error sending email');
+    }
 });
 
 module.exports = router;
