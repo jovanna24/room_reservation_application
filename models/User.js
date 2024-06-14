@@ -1,5 +1,5 @@
 const { Model, DataTypes } = require("sequelize");
-const bcrypt = require("bcyrpt");
+const bcrypt = require("bcrypt");
 const sequelize = require("../config/connection");
 
 class User extends Model {
@@ -36,7 +36,7 @@ User.init(
       },
     },
     admin: {
-      type: boolean,
+      type: DataTypes.BOOLEAN, 
       allowNull: false,
       defaultValue: false,
     },

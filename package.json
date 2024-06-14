@@ -4,7 +4,8 @@
   "description": "## Description",
   "main": "room-tiles.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
   },
   "keywords": [],
   "author": "",
@@ -18,6 +19,8 @@
     "pg": "^8.12.0",
     "luxon": "3.0.4",
     "parcel-bundler": "1.12.5",
-    "slot-calculator": "^2.2.1"
+    "slot-calculator": "^2.2.1",
+    "express": "^4.19.2", 
+    "express-session": "^1.18.0"
   }
 }
