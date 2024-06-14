@@ -1,71 +1,107 @@
 const router = require('express').Router();
-const { Room, User } = require('../models');
+const { Room, User, Event } = require('../models');
 const withAuth = require('../utils/auth');
 
 router.get('/', async (req, res)=> {
     try {
-        const roomData = await Room.findAll({
+        const eventData = await Event.findAll({
             include: [
                 {
                     model: User, 
-                    attributes: ['name'],
-                    // need to double check the User model attributes
+                    attributes: ['id'],
                 },
+                {
+                    model: Room, 
+                    include: {
+                        model: User, 
+                        attributes: ['name'],
+                    },
+                }
             ],
         });
-        const rooms = roomData.map((project) => project.get({ plain: true }));
+        const events = eventData.map((event) => event.get({ plain: true }));
 
         res.render('homepage', {
-            rooms, 
+            events, 
             logged_in: req.session.logged_in
         });
     } catch (err) {
+        console.error('Error fetching homepage data:', err);
         res.status(500).json(err);
     }
 });
-
-router.get('/room/:id', async (req, res) => {
+// route to get an individual event
+router.get('/event/:id', async (req, res) => {
     try {
-        const roomData = await Room.findByPk(req.params.id, {
+        const eventData = await Room.findByPk(req.params.id, {
             include: [
                 {
                     model: User, 
-                    attributes: ['name'],
+                    attributes: ['id'],
                 },
+                {
+                    model: Room, 
+                    include: {
+                        model: User, 
+                        attributes: ['name']
+                    }
+                }
             ],
         });
-
-        const room = roomData.get({ plain: true });
-
-        res.render('room', {
-            ...room,
+        if (!eventData){
+            res.status(404).json({ message: 'No events found with this id!' });
+        }
+        const event = eventData.get({ plain: true });
+        console.log(event); 
+        res.render('event', {
+            event, 
             logged_in: req.session.logged_in
         }); 
-    } catch (err) {
-        res.status(500).json(err);
-    }
-});
+     } catch(err) {
+            console.error('Error fetching event data: ', err);
+            res.status(500).json(err);
+        } 
 
-router.get('/homepage', withAuth, async (req, res)=>{
+    });
+
+// route to get profile
+router.get('/profile', withAuth, async (req, res)=>{
     try {
         const userData = await User.findByPk(req.session.user_id, {
             attributes: { exclude: ['password'] }, 
-            include: [{ model: Room }],
+            include: [
+                { 
+                    model: Event, 
+                    include: {
+                        model: Room, 
+                        include: {
+                            model: User, 
+                            attributes: ['name'],
+                        },
+                },
+            },
+        ],
         }); 
+        if (!userData) {
+            res.status(404).json({  message: 'No user found with this id!' });
+            return;
+        }
         const user = userData.get({ plain: true }); 
 
-        res.render('homepage', {
+        res.render('profile', {
             ...user, 
             logged_in: true
         });
     } catch (err) {
+        console.error('Error fetching profile data:', err);
         res.status(500).json(err);
     }
 }); 
 
+// route for login 
 router.get('/login', (req, res) => {
     if (req.session.logged_in) {
-        res.redirect('/event-form');
+        res.redirect('/profile');
         return;
     }
     res.render('login');

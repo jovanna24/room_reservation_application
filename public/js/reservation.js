@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
             }); 
             if (response.ok) {
-                document.location.replace('/profile');
+                document.location.replace('/events');
             } else {
                 alert('Failed to place reservation!')
             }
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }); 
 
             if (response.ok) {
-                document.location.replace('/profile');
+                document.location.replace('/events');
             } else {
                 alert('Failed to cancel reservation!');
             }
