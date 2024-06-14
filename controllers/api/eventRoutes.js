@@ -1,7 +1,18 @@
 const router = require("express").Router();
 const { Event } = require("../../models");
 
-router.post('/event-form', async (req, res) => {
+// GET route to retrieve all events
+router.get('/events', async (req, res) => {
+  try {
+    const events = await Event.findAll();
+    res.json(events);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while retrieving the events' });
+  }
+});
+
+router.post('/events', async (req, res) => {
   try {
     const { host, contact, title, description, reservation, room } = req.body;
     const newEvent = await Event.create(
@@ -20,17 +31,6 @@ router.post('/event-form', async (req, res) => {
       .json({ error: "An error occured while creating the event" });
   }
 }); 
-
-// GET route to retrieve all events
-router.get('/events', async (req, res) => {
-  try {
-    const events = await Event.findAll();
-    res.json(events);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'An error occurred while retrieving the events' });
-  }
-});
 
 // GET route to retrieve a specific event by ID
 router.get('/events/:id', async (req, res) => {

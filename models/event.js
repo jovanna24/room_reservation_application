@@ -31,14 +31,20 @@ Event.init(
       type: DataTypes.DATE,
       allowNull: false,
     },
-    room: {
-      type: DataTypes.STRING,
+    roomId: { 
+      type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'room',
+        key: 'id',
+      },
     },
   },
   {
     sequelize,
-    modelName: 'Event',
+    freezeTableName: true,
+    underscored: true,
+    modelName: 'event',
   }
 );
 
