@@ -1,5 +1,6 @@
 const router = require('express').Router(); 
 const { User } = require('../../models'); 
+const sendMail = require('../utils/mailer');
 
 // route for user registration
 router.post('/', async (req, res) => {
@@ -17,7 +18,7 @@ router.post('/', async (req, res) => {
         res.status(400).json(err);
     }
 }); 
-
+// route for user login
 router.post('/login', async (req, res) => {
     try {
         const userData = await User.findOne({where: { email: req.body.email } }); 
@@ -46,6 +47,25 @@ router.post('/login', async (req, res) => {
     } catch (err) {
         res.status(400).json(err);
     }
+});
+
+// route for sending an email
+    router.post('/send-email', async (req, res) => {
+        try {
+          await sendMail({
+            from: '', // sender address
+            to: "", // list of receivers
+            subject: "Hello ✔", // Subject line
+            text: "Hello world?", // plain text body
+            html: "<b>Hello world?</b>", // html body
+          });
+      
+          res.send('Email sent successfully!');
+        } catch (error) {
+          console.error('Error sending email:', error);
+          res.status(500).send('Error sending email');
+        }
+     
     
 });
 

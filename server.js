@@ -4,6 +4,7 @@ const session= require('express-session');
 const exphbs = require('express-handlebars'); 
 const routes = require('./controllers');
 const helpers = require('./utils/helpers'); 
+const sendMail = require('./utils/mailer');
 
 const sequelize = require('./config/connection'); 
 const SequelizeStore= require('connect-session-sequelize')(session.Store); 
@@ -52,3 +53,6 @@ sequelize.sync({ force: false }).then(() => {
 .catch(err => {
     console.error('Unable to sync database: ', err);
 });
+
+const mailRoutes = require('./controllers/userController'); // Adjust the path as necessary
+app.use('/user', mailRoutes);
