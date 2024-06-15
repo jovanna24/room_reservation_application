@@ -23,8 +23,29 @@ Room.init(
             type: DataTypes.INTEGER, 
             allowNull: false,
         },
+        date_created: {
+            type: DataTypes.DATE, 
+            allowNull: false, 
+            defaultValue: DataTypes.NOW
+        }, 
+        user_id: {
+            type: DataTypes.INTEGER, 
+            references: {
+                model: 'user', 
+                key: 'id'
+            }
+        },
+        event_id: {
+            type: DataTypes.INTEGER, 
+            references: {
+                model: 'event', 
+                key: 'id'
+            }
+        }
+
     }, 
     {
+    
         sequelize, 
         timestamps: false, 
         freezeTableName: true,
