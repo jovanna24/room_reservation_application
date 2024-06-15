@@ -1,10 +1,10 @@
 {{!-- Loop over each reservation object in the reservation array --}}
-{{#if rooms.length}}
+{{#if events.length}}
     <ul>
-        {{#each rooms as |room|}}
+        {{#each events as |event|}}
             <li>
-                <h3><a href="/room/{{room.id}}">{{room.title}}</a></h3>
-                <p>Published on {{format_date room.date_created}}</p>
+                <h3><a href="/event/{{event.id}}">{{event.title}}</a></h3>
+                <p>Published on {{format_date event.date_created}}</p>
             </li>
         {{/each}}
     </ul>

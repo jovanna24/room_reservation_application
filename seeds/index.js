@@ -1,47 +1,27 @@
 const sequelize = require('../config/connection');
 const { User, Event, Room } = require('../models');
 
-const userData = require('./userData.json');
-const eventData = require('./eventData.json'); 
-const roomData = require('./roomData.json')
+const { User, Event, Room } = require('../models');
 
 const seedDatabase = async () => {
-    try {
-        await sequelize.sync({ force: true });
-        console.log('Database synced!');
+  await User.bulkCreate([
+    { name: 'John Doe', email: 'john@example.com', password: 'password', admin: false },
+    { name: 'Jane Smith', email: 'jane@example.com', password: 'password', admin: true },
+  ]);
 
-        const users = await User.bulkCreate(userData, {
-            individualHooks: true, 
-            returning: true,
-        }); 
-        console.log('Users seeded!');
+  await Room.bulkCreate([
+    { room_number: 101, available_resources: 'Projector, Whiteboard', room_capacity: 50, date_created: new Date() },
+    { room_number: 102, available_resources: 'Conference Phone, Whiteboard', room_capacity: 20, date_created: new Date() },
+  ]);
 
-        const events = await Promise.all(
-            eventData.map(async (event) => {
-                const createdEvent = await Event.create({
-                    ...event, 
-                    user_id: users[Math.floor(Math.random() * users.length)].id,
-                }); 
-                return createdEvent;
-            })
-        );
-        console.log('Events seeded!'); 
+  await Event.bulkCreate([
+    { host: 'John Doe', contact: 'john@example.com', title: 'Team Meeting', description: 'Monthly team meeting', reservation: new Date(), room_id: 1, created_at: new Date(), updated_at: new Date(), user_id: 1 },
+    { host: 'Jane Smith', contact: 'jane@example.com', title: 'Project Kickoff', description: 'Kickoff meeting for the new project', reservation: new Date(), room_id: 2, created_at: new Date(), updated_at: new Date(), user_id: 2 },
+  ]);
 
-        await Promise.all(
-            roomData.map(async (room) => {
-                return await Room.create({
-                    ...room, 
-                    user_id: users[Math.floor(Math.random() * users.length)].id,
-                    event_id: events[Math.floor(Math.random() * events.length)].id,
-                });
-            })
-        );
-        console.log('Rooms seeded!');
-        console.log('Database seeded successfully!');
-    } catch (err) {
-        console.error('Failed to seed database: ', err);
-    } 
-    process.exit(0);
+  console.log('Database seeded!');
 };
 
-seedDatabase();
+seedDatabase().catch(error => {
+  console.error('Failed to seed database:', error);
+});
