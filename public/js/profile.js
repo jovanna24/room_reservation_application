@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const room_number = document.querySelector('#room-number').value.trim(); 
 
         if(reserver && room_number) {
-            const response = await fetch('/api/event-route',{
+            const response = await fetch('/api/events',{
                 method: "POST", 
                 body: JSON.stringify({ reserver, room_number }),  
                 headers: {
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 },
             }); 
             if (response.ok) {
-                document.location.replace('/events');
+                document.location.replace('/profile');
             } else {
                 alert('Failed to place reservation!')
             }
@@ -25,26 +25,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target.hasAttribute('data-id')){ 
             const id = event.target.getAttribute('data-id'); 
 
-            const response = await fetch(`/api/placeholder/${id}`, {
+            const response = await fetch(`/api/events/${id}`, {
                 method: 'DELETE',
             }); 
 
             if (response.ok) {
-                document.location.replace('/events');
+                document.location.replace('/profile');
             } else {
                 alert('Failed to cancel reservation!');
             }
         }
     };
 
-    const newReservationForm = document.querySelector('.new-reservation-form');
-    if (newReservationForm) {
-        newReservationForm.addEventListener('submit', newFormHandler);
+    const newEventForm = document.querySelector('.new-event-form');
+    if (newEventForm) {
+        newEventForm.addEventListener('submit', newFormHandler);
     } 
 
-    const reservationList = document.querySelector('.reservation-list'); 
-    if (reservationList) {
-        reservationList.addEventListener('click', delButtonHandler);
+    const eventList = document.querySelector('.event-list'); 
+    if (eventList) {
+       eventList.addEventListener('click', delButtonHandler);
     }
     const templateSource = document.getElementById('template-row').innerHTML;
     const template = Handlebars.compile(templateSource);
