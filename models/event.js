@@ -31,7 +31,7 @@ Event.init(
       type: DataTypes.DATE,
       allowNull: false,
     },
-    roomId: { 
+    room_id: { 
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
