@@ -1,7 +1,7 @@
 [
     {
         "room_number": 1,
-        "available_resources": ["projector"],
+        "available_resources": "projector",
         "room_capacity": 5,
         "reservations": [
             {
@@ -9,14 +9,14 @@
                 "contact": "john@example.com",
                 "title": "Meeting",
                 "description": "Monthly meeting",
-                "reservation": "2024-06-15T12:00:00Z",
+                "reservation": "06/15/2024",
                 "room_id": 1
             }
         ]
     },
     {
         "room_number": 2,
-        "available_resources": [],
+        "available_resources": "",
         "room_capacity": 0,
         "reservations": [
             {
@@ -24,7 +24,7 @@
                 "contact": "jane@example.com",
                 "title": "Conference",
                 "description": "Annual conference",
-                "reservation": "2024-07-01T09:00:00Z",
+                "reservation": "06/20/2024",
                 "room_id": 2
             }
         ]

@@ -2,6 +2,7 @@ const router = require("express").Router();
 const { Event } = require("../../models");
 const withAuth = require('../../utils/auth');
 
+// get all events
 router.get('/', withAuth, async (req, res)=> {
   try {
     const eventData = await Event.findAll({
@@ -27,7 +28,7 @@ router.get('/', withAuth, async (req, res)=> {
 }); 
 
 // route to creat a new event 
-router.event('/', withAuth, async (req, res)=> {
+router.post('/', withAuth, async (req, res)=> {
   try{
     const { title, description } = req.body;
     if(!title || !description) {
