@@ -59,8 +59,13 @@ User.init(
     timestamps: false,
     freezeTableName: true,
     underscored: true,
-    modelName: "user",
+    modelName: 'user',
   }
-);
+); 
+
+User.associate = function(models) {
+  User.hasMany(models.Event, { as: 'events' });
+  User.hasMany(models.Room, { as: 'rooms'});
+}
 
 module.exports = User;

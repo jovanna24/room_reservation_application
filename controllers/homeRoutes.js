@@ -15,6 +15,7 @@ router.get('/', async (req, res)=> {
                     include: {
                         model: User, 
                         attributes: ['name'],
+                        as: 'rooms'
                     },
                 }
             ],
@@ -43,7 +44,8 @@ router.get('/event/:id', async (req, res) => {
                     model: Room, 
                     include: {
                         model: User, 
-                        attributes: ['name']
+                        attributes: ['name'], 
+                        as: 'rooms'
                     }
                 }
             ],
@@ -77,6 +79,7 @@ router.get('/profile', withAuth, async (req, res)=>{
                         include: {
                             model: User, 
                             attributes: ['name'],
+                            as: 'rooms'
                         },
                 },
             },

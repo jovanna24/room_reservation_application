@@ -21,7 +21,13 @@ Event.init(
     },
     title: {
       type: DataTypes.STRING,
-      allowNull: false,
+      user_id: {
+        type: DataTypes.INTEGER, 
+        references: {
+          model: 'Users', 
+          key: 'id'
+        }
+      },
     },
     description: {
       type: DataTypes.TEXT,
@@ -47,5 +53,8 @@ Event.init(
     modelName: 'event',
   }
 );
+Event.associate = function(models) {
+  Event.belongsTo(models.User, { as: 'user' });
+};
 
 module.exports = Event;
