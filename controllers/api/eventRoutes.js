@@ -1,6 +1,7 @@
 const router = require("express").Router();
-const { Event, User, Room } = require("../../models");
+const { Event } = require("../../models");
 const withAuth = require('../../utils/auth');
+const { sendReminderEmail } = require('../services/emailService');
 
 // get all events
 router.get('/', withAuth, async (req, res)=> {
@@ -29,28 +30,33 @@ router.get('/', withAuth, async (req, res)=> {
 }); 
 
 // Route to create a new event
+
 router.post('/', withAuth, async (req, res) => {
   try {
-    const { room_number, description, contact, host, reservation } = req.body;
+    const { description, contact, host, reservation } = req.body;
 
     // Validate incoming data
-    if (!room_number || !description || !contact || !host || !reservation) {
+    if (!description || !contact || !host || !reservation) {
       return res.status(400).json({ error: 'All fields are required!' });
     }
-
     const newEvent = await Event.create({
       description,
       contact,
-      host, 
-      reservation, 
+      host,
+      reservation,
+      user_id: req.session.user_id,
     });
+    if (req.body.sendReminder) {
+      await sendReminderEmail(req.body); 
+    }
 
     res.status(200).json(newEvent);
   } catch (err) {
-    console.error(err);
-    res.status(400).json(err);
+    console.error('Error creating event:', err);
+    res.status(400).json({ error: `Failed to create event! ${errorData.error}` });
   }
 });
+
 
 
 

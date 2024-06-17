@@ -32,10 +32,10 @@
     <section class="reservation-tool-ui">
       <form id="reservation-form">
   <h2>Make a Reservation</h2>
-  <div class="form-group">
+  {{!-- <div class="form-group">
     <label for="room-number">Room Number:</label>
     <input type="text" id="room-number" name="room_number" required>
-  </div>
+  </div> --}}
   <div class="form-group">
     <label for="event-info">Event Info:</label>
     <input type="text" id="event-info" name="description" required>
@@ -52,7 +52,13 @@
     <label for="reservation">Date:</label>
     <input type="text" class="datePicker" id="reservation" name="reservation" required>
   </div>
+  <div class="form-group">
+  <label for="sendReminder">Send Email Reminder:</label>
+  <input type="checkbox" id="sendReminder" name="sendReminder">
+</div>
+
   <button type="submit" id="bookRoomBtn">Book Room</button>
+  
 </form>
 
     </section>
