@@ -1,43 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Room Reservation</title>
-    <link rel="stylesheet" type="text/css" href="/css/jass.css" />
-    <link rel="stylesheet" type="text/css" href="/css/style.css" />
-  </head>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Room Reservation Application</title>
+    <script src="https://cdn.jsdelivr.net/npm/handlebars@4.7.7/dist/handlebars.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-<body> 
-        <div class="flex-column justify-space-around">
-            <header class="d-flex justify-content-between align-items-center p-2"> 
-                <nav class="position-relative w-100">
-                    <ul class="navbar-nav d-flex flex-row mr-auto">
-                        <li class="nav-item mr-2">
-                            <a href="/" class="btn btn-link btn-sm btn-outline-dark">Home</a></li>
-                        {{#if logged_in}}
-                        <li class="nav-item mr-2">
-                            <a href="/profile" class="btn btn-link btn-sm btn-outline-dark">Dashboard</a></li>
-                        <li class="nav-item mr-2">
-                            <button class="btn btn-link btn-sm btn-outline-dark" id="logout">Logout</button></li>
-                        {{else}}
-                        <li class="nav-item mr-2">
-                            <a href="/login" class="btn btn-link btn-sm btn-outline-dark">Login</a></li>
-                        {{/if}}
-                    </ul>
-                    <h2 id="centered-tile" class="col-md-5 text-center">The Tech Blog</h2>
-                </nav>
-            </header>
-            <main class="container container-fluid mt-5">
-                {{{ body }}}
-            </main>
-            <footer>
-                {{!-- footer info to be added here --}}
-            </footer>
-        </div> 
-        {{#if logged_in}}
-        <script src="/js/logout.js"></script> 
-        {{/if}}
-    </body>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    
+  <link rel="stylesheet" type="text/css" href="/css/jass.css" />
+  <link rel="stylesheet" type="text/css" href="/css/style.css" />
+</head>
+
+<body>
+  <div class="flex-column justify-space-around">
+    <header class="d-flex justify-content-between align-items-center p-2">
+      <nav class="position-relative w-100">
+        <ul class="navbar-nav d-flex flex-row mr-auto">
+          <li class="nav-item mr-2">
+            <a href="/" class="btn btn-link btn-sm btn-outline-dark">Home</a>
+          </li>
+          {{#if logged_in}}
+          <li class="nav-item mr-2">
+            <a href="/profile" class="btn btn-link btn-sm btn-outline-dark">Dashboard</a>
+          </li>
+          <li class="nav-item mr-2">
+            <button class="btn btn-link btn-sm btn-outline-dark" id="logout">Logout</button>
+          </li>
+          {{else}}
+          <li class="nav-item mr-2">
+            <a href="/login" class="btn btn-link btn-sm btn-outline-dark">Login</a>
+          </li>
+          {{/if}}
+        </ul>
+        <h2 id="centered-tile" class="col-md-5 text-center">Reserve a Room!</h2>
+      </nav>
+    </header>
+    <main class="container container-fluid mt-5">
+      {{{ body }}}
+    </main>
+    <div class="container">
+      <footer class="py-3 my-4">
+        <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+          <p class="text-center text-muted">© 2024 Reservation Application</p>
+        </ul>
+      </footer>
+    </div>
+  {{#if logged_in}}
+  <script src="/js/logout.js"></script>
+  {{/if}}
+</body>
+
 </html>

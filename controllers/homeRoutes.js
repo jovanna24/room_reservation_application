@@ -9,13 +9,15 @@ router.get('/', async (req, res)=> {
                 {
                     model: User, 
                     attributes: ['id'],
+                    as: 'user',
                 },
                 {
                     model: Room, 
+                    as: 'rooms',
                     include: {
                         model: User, 
                         attributes: ['name'],
-                        as: 'rooms'
+                        as: 'user'
                     },
                 }
             ],
@@ -34,18 +36,20 @@ router.get('/', async (req, res)=> {
 // route to get an individual event
 router.get('/event/:id', async (req, res) => {
     try {
-        const eventData = await Room.findByPk(req.params.id, {
+        const eventData = await Event.findByPk(req.params.id, {
             include: [
                 {
                     model: User, 
-                    attributes: ['id'],
+                    attributes: ['name'],
+                    as: 'user',
                 },
                 {
                     model: Room, 
+                    as: 'rooms',
                     include: {
                         model: User, 
                         attributes: ['name'], 
-                        as: 'rooms'
+                        as: 'user',
                     }
                 }
             ],
@@ -61,7 +65,7 @@ router.get('/event/:id', async (req, res) => {
         }); 
      } catch(err) {
             console.error('Error fetching event data: ', err);
-            res.status(500).json(err);
+            res.status(500).json({ error: 'Error fetching event data' });
         } 
 
     });
@@ -74,12 +78,14 @@ router.get('/profile', withAuth, async (req, res)=>{
             include: [
                 { 
                     model: Event, 
+                    as: 'events',
                     include: {
                         model: Room, 
+                        as: 'rooms',
                         include: {
                             model: User, 
                             attributes: ['name'],
-                            as: 'rooms'
+                            as: 'user'
                         },
                 },
             },

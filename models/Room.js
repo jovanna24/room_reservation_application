@@ -14,13 +14,7 @@ Room.init(
         }, 
         room_number: {
             type: DataTypes.INTEGER, 
-            user_id: {
-                type: DataTypes.INTEGER,
-                references: {
-                    model: 'Users', 
-                    key: 'id'
-                }
-            }, 
+            allowNull: false,
         }, 
         available_resources: {
             type: DataTypes.STRING, 
@@ -59,8 +53,5 @@ Room.init(
         modelName:'room',
     }
 ); 
-Room.associate = function(models) {
-    Room.belongsTo(models.User, { as: 'user' });
-}
 
 module.exports = Room;

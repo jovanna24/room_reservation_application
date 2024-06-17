@@ -24,7 +24,7 @@ Event.init(
       user_id: {
         type: DataTypes.INTEGER, 
         references: {
-          model: 'Users', 
+          model: 'user', 
           key: 'id'
         }
       },
@@ -37,7 +37,15 @@ Event.init(
       type: DataTypes.DATE,
       allowNull: false,
     },
-    room_id: { 
+    user_id: { 
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: 'user',
+        key: 'id',
+      },
+    },
+    room_id: {  
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -53,8 +61,5 @@ Event.init(
     modelName: 'event',
   }
 );
-Event.associate = function(models) {
-  Event.belongsTo(models.User, { as: 'user' });
-};
 
 module.exports = Event;

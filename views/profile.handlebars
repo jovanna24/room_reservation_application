@@ -1,43 +1,64 @@
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{{room.room_number}}</title>
-  </head>
-  <body>
-    <div class="room-card-layout">
-      <section class="admin-tools-ui">
-        {{admin-settings-tools}}
-      </section>
-      <section class="room-card">
-        {{room.room_number}}
-        {{room.available_resources}}
-        {{room.room_capacity}}
-        {{event.info}}
-        {{event.host}}
-        {{event.host.contact}}
-      </section>
-    </div>
-    <div class="reservation-tool-ui">
-      <!-- we can put the res controls here as a template literal if needed -->
-      {{reservation-tool}}
-    </div>
-  </body>
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Sent</title>
-  </head>
-  <body>
-    <h1>{{ message }}</h1>
-</body>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Error</title>
-</head>
-<body>
-    <h1>{{error}}</h1>
-</body>
-</html>
+<div class="container">
+  <header>
+    <h1>Welcome, {{ name }}!</h1>
+  </header>
+
+  <main>
+    <section class="room-card-layout">
+      <div class="admin-tools-ui">
+        {{!-- Include admin settings tools if applicable --}}
+      </div>
+      {{#if events.length}}
+      <div class="room">
+        <h2>Your Room Reservation Details:</h2>
+        <ul>
+          {{#each events as |event|}}
+          <li>
+            <strong>Room Number:</strong> {{event.room.room_number}}<br>
+            <strong>Available Resources:</strong> {{event.room.available_resources}}<br>
+            <strong>Room Capacity:</strong> {{event.room.room_capacity}}<br>
+            <strong>Event Info:</strong> {{event.description}}<br>
+            <strong>Host:</strong> {{event.host}}<br>
+            <strong>Contact:</strong> {{event.contact}}<br>
+          </li>
+          {{/each}}
+        </ul>
+      </div>
+      {{else}}
+      <p>No events found.</p>
+      {{/if}}
+    </section>
+
+    <section class="reservation-tool-ui">
+      <form id="reservation-form">
+  <h2>Make a Reservation</h2>
+  <div class="form-group">
+    <label for="room-number">Room Number:</label>
+    <input type="text" id="room-number" name="room_number" required>
+  </div>
+  <div class="form-group">
+    <label for="event-info">Event Info:</label>
+    <input type="text" id="event-info" name="description" required>
+  </div>
+  <div class="form-group">
+    <label for="contact">Contact:</label>
+    <input type="text" id="contact" name="contact" required>
+  </div>
+  <div class="form-group">
+    <label for="host">Host:</label>
+    <input type="text" id="host" name="host" required>
+  </div>
+  <div class="form-group">
+    <label for="reservation">Date:</label>
+    <input type="text" class="datePicker" id="reservation" name="reservation" required>
+  </div>
+  <button type="submit" id="bookRoomBtn">Book Room</button>
+</form>
+
+    </section>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="/js/profile.js"></script>
+  </main>
+</div>

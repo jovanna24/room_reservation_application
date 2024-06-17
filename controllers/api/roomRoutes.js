@@ -16,28 +16,28 @@ router.get('/', withAuth, async (req, res) => {
         logged_in: req.session.logged_in,
       });
     } catch (err) { 
-      console.error(err);
-      res.status(500).json(err);
+      console.error('Error fetching rooms:',err);
+      res.status(500).json({ message: 'Error fetching rooms', error: err });
     }
   });
 // route to create a new room
 router.post('/', withAuth, async (req, res) => {
     try {
-        const newroom = await room.create({
+        const newroom = await Room.create({
             ...req.body,
             user_id: req.session.user_id
         }); 
-        res.status(200).json(newroom);
+        res.status(200).json(newRoom);
     } catch (err) { 
-        console.error(err);
-        res.status(400).json(err);
+        console.error('Error creating room:', err);
+        res.status(400).json({ message: 'Error creating room', error: err });
     }
 }); 
 
 // route to delet a room by id
 router.delete('/:id', withAuth, async (req, res) => {
     try{
-        const roomData = await room.destroy({
+        const roomData = await Room.destroy({
             where: {
                 id: req.params.id, 
                 user_id: req.session.user_id,
@@ -49,7 +49,8 @@ router.delete('/:id', withAuth, async (req, res) => {
         }
         res.status(200).json({ message: 'room deleted successfully!' });
     } catch(err) {
-        res.status(500).json(err);
+      console.error('Error deleting room:', err);
+      res.status(500).json({ message: 'Error deleting room', error: err });
     }
 });
 

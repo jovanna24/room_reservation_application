@@ -23,6 +23,8 @@ const loginFormHandler = async (event) => {
     console.error('Error: ', error);
     alert('Failed to log in');
   }
+} else {
+  alert('Please enter email and password')
 }
 };
 const createEvent = async (eventData) => {
@@ -74,6 +76,8 @@ const signupFormHandler = async (event) => {
     console.error ('Error: ', error); 
     alert('Failed to sign up!');
   }
+} else {
+  alert('Please enter name, email, and password');
 }
 };
 

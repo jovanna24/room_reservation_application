@@ -4,7 +4,7 @@
         {{#each events as |event|}}
             <li>
                 <h3><a href="/event/{{event.id}}">{{event.title}}</a></h3>
-                <p>Published on {{format_date event.date_created}}</p>
+                <p>Reserved on {{format_date event.reservation}}</p>
             </li>
         {{/each}}
     </ul>
