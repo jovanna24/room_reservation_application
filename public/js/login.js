@@ -5,6 +5,7 @@ const loginFormHandler = async (event) => {
   const password = document.querySelector('#password-login').value.trim();
 
   if (email && password) {
+    try{
 
     const response = await fetch('/api/users/login', {
       method: 'POST',
@@ -15,10 +16,40 @@ const loginFormHandler = async (event) => {
     if (response.ok) {
       document.location.replace('/profile');
     } else {
-      alert(response.statusText);
+      const result = await response.json();
+      alert(result.error);
     }
+  } catch (error) {
+    console.error('Error: ', error);
+    alert('Failed to log in');
+  }
+} else {
+  alert('Please enter email and password')
+}
+};
+const createEvent = async (eventData) => {
+  try {
+    const response = await fetch('/api/events', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(eventData)
+    });
+
+    if (response.ok) {
+      const newEvent = await response.json();
+      console.log('Created event:', newEvent);
+    } else {
+      const errorData = await response.json();
+      console.error('Failed to create event:', errorData.error);
+      // Handle error case on the client side
+    }
+  } catch (error) {
+    console.error('Error creating event:', error);
   }
 };
+
 
 const signupFormHandler = async (event) => {
   event.preventDefault();
@@ -27,7 +58,8 @@ const signupFormHandler = async (event) => {
   const email = document.querySelector('#email-signup').value.trim();
   const password = document.querySelector('#password-signup').value.trim();
 
-  if (name && email && password) {
+  if (name && email && password) { 
+    try {
     const response = await fetch('/api/users', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
@@ -37,9 +69,16 @@ const signupFormHandler = async (event) => {
     if (response.ok) {
       document.location.replace('/profile');
     } else {
-      alert(response.statusText);
+      const result = await response.json();
+      alert(result.error || response.statusText);
     }
+  } catch (error) {
+    console.error ('Error: ', error); 
+    alert('Failed to sign up!');
   }
+} else {
+  alert('Please enter name, email, and password');
+}
 };
 
 document

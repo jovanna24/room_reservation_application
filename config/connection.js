@@ -15,7 +15,8 @@ if (process.env.DB_URL) {
     DB_PASSWORD='Dxsxxd1124!',
     {
       host: 'localhost',
-      dialect: 'postgres'
+      dialect: 'postgres',
+      logging: console.log
     }
   );
 }

@@ -1,0 +1,18 @@
+[
+  {
+      "host": "John Doe",
+      "contact": "john@example.com",
+      "title": "Meeting",
+      "description": "Monthly meeting",
+      "reservation": "2024-06-15T12:00:00Z", 
+      "room_id": 1
+  },
+  {
+      "host": "Jane Smith",
+      "contact": "jane@example.com",
+      "title": "Conference",
+      "description": "Annual conference",
+      "reservation": "2024-07-01T09:00:00Z",
+      "room_id": 2
+  }
+]
