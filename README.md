@@ -1,4 +1,4 @@
-# room_reservation_application
+# Room Reservation Application
 
 ## Description
 
@@ -12,11 +12,45 @@ Ultimatly, this application helps any organization make rooms reservable online 
 
 [what-we-learned]
 
+## Table of Contents
+- [Description](#description) 
+- [Installation](#installation)
+- [Usage](#usage)
+- [Contribution](#contribution)
+- [Examples](#examples)
+- [License](#license)
+- [Questions](#questions)
+
 ---
 
 ## Instalation
 
-[unsure-as-of-yet]
+To install and run the Room Reservation Application locally, follow these steps:
+
+Clone the repository:
+
+bash
+Copy code
+git clone https://github.com/your/repository.git
+cd room-reservation-app
+Install dependencies:
+
+npm install
+Set up the database:
+
+Ensure PostgreSQL is installed and running.
+Create a new database for the application.
+Database configuration:
+
+Update config/connection.js with your PostgreSQL database credentials.
+Run migrations:
+
+npx sequelize-cli db:migrate
+Start the server:
+
+sql
+npm start
+The application should now be running locally on http://localhost:3000.
 
 ## Usage
 
@@ -39,10 +73,9 @@ Admins are capable of adding rooms to the site, altering descriptions, and defin
 ## Tech Used
 
 this project utilizes npm and jquery libraries.
-specifically a slot calculator, nodemailer, and a jquery calander handler in handlebars.
+specifically a nodemailer and a jquery calander handler in handlebars.
 
 Links:
-![slot-calculator](https://www.npmjs.com/package/slot-calculator#basic-usage)
 ![nodemailer](https://www.npmjs.com/package/nodemailer)
 ![jquery-calander-code-pen](https://codepen.io/acidhorse/pen/doqzLL)
 
@@ -60,7 +93,7 @@ Links:
 
 There is not licencing on this project
 
-## Contributors
+## Contribution
 
 - Austin Seger
 - Jovanna Jimenez
