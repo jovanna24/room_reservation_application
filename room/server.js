@@ -8,6 +8,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const fs = require("fs");
 const util = require("util");
+const nodemailer = require("nodemailer");
 
 const app = express();
 const port = 3000;
@@ -15,12 +16,14 @@ const port = 3000;
 const readFile = util.promisify(fs.readFile);
 const writeFile = util.promisify(fs.writeFile);
 
-const USERS_FILE = "users.json";
-const BOOKINGS_FILE = "bookings.json";
+const USERS_FILE = path.join(__dirname, "users.json");
+const BOOKINGS_FILE = path.join(__dirname, "bookings.json");
 
 app.use(bodyParser.json());
 app.use(cors());
-app.use(express.static(path.join(__dirname, "public")));  // Serve static files
+
+// Serve static files from the room-booking directory
+app.use(express.static(path.join(__dirname, 'room-booking')));
 
 app.use(
   session({
@@ -35,46 +38,80 @@ app.use(passport.session());
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
-    const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
-    const user = users.find(user => user.username === username);
-    if (!user) return done(null, false, { message: "Incorrect username." });
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) return done(null, false, { message: "Incorrect password." });
-    return done(null, user);
+    try {
+      const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
+      const user = users.find(user => user.username === username);
+      if (!user) return done(null, false, { message: "Incorrect username." });
+      const match = await bcrypt.compare(password, user.password);
+      if (!match) return done(null, false, { message: "Incorrect password." });
+      return done(null, user);
+    } catch (error) {
+      return done(error);
+    }
   })
 );
 
 passport.serializeUser((user, done) => done(null, user.username));
 passport.deserializeUser(async (username, done) => {
-  const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
-  const user = users.find(user => user.username === username);
-  done(null, user);
+  try {
+    const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
+    const user = users.find(user => user.username === username);
+    done(null, user);
+  } catch (error) {
+    done(error);
+  }
+});
+
+// Configure NodeMailer
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'your-email@gmail.com', // Replace with your email
+    pass: 'your-app-password'     // Replace with your app-specific password
+  }
 });
 
 app.post("/register", async (req, res) => {
   const { username, password, email } = req.body;
-  const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
-  const hash = await bcrypt.hash(password, 10);
-  const newUser = { username, password: hash, email };
-  users.push(newUser);
-  await writeFile(USERS_FILE, JSON.stringify(users, null, 2));
-  res.send("User registered");
+  try {
+    const users = JSON.parse(await readFile(USERS_FILE, "utf8"));
+    const existingUser = users.find(user => user.username === username);
+    if (existingUser) {
+      return res.status(400).send("Username already exists.");
+    }
+    const hash = await bcrypt.hash(password, 10);
+    const newUser = { username, password: hash, email };
+    users.push(newUser);
+    await writeFile(USERS_FILE, JSON.stringify(users, null, 2));
+    res.send("User registered");
+  } catch (error) {
+    res.status(500).send("Error registering user");
+  }
 });
 
-app.post("/login", passport.authenticate("local"), (req, res) => {
-  res.send("User logged in");
+app.post("/login", (req, res, next) => {
+  passport.authenticate("local", (err, user, info) => {
+    if (err) return next(err);
+    if (!user) return res.status(401).send(info.message);
+    req.logIn(user, err => {
+      if (err) return next(err);
+      return res.send("User logged in");
+    });
+  })(req, res, next);
 });
 
 app.post("/logout", (req, res) => {
-  req.logout();
-  res.send("User logged out");
+  req.logout(err => {
+    if (err) return res.status(500).send("Error logging out");
+    res.send("User logged out");
+  });
 });
 
 app.post("/book", async (req, res) => {
-  const { room, dateTime } = req.body;
+  const { room, dateTime, emailReminder } = req.body;
 
   if (!req.isAuthenticated()) {
-    return res.status(401).send("User not authenticated.");
+    return res.status(401).send("You must be signed in to book a room.");
   }
 
   const { username, email } = req.user;
@@ -83,22 +120,48 @@ app.post("/book", async (req, res) => {
     return res.status(400).send("Room and dateTime are required.");
   }
 
-  const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
-  const existingBooking = bookings.find(booking => booking.room === room && booking.dateTime === dateTime);
-  if (existingBooking) {
-    return res.status(400).send("Room is already booked for the selected date and time.");
+  try {
+    const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
+    const existingBooking = bookings.find(booking => booking.room === room && booking.dateTime === dateTime);
+    if (existingBooking) {
+      return res.status(400).send("Room is already booked for the selected date and time.");
+    }
+
+    const newBooking = { room, dateTime, username, email };
+    bookings.push(newBooking);
+    await writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
+
+    if (emailReminder) {
+      // Send email reminder
+      const mailOptions = {
+        from: 'your-email@gmail.com', // Replace with your email
+        to: email,
+        subject: 'Room Booking Confirmation',
+        text: `Dear ${username},\n\nYour room booking for ${room} on ${dateTime} has been confirmed.\n\nThank you!`
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.log('Error sending email:', error);
+        } else {
+          console.log('Email sent:', info.response);
+        }
+      });
+    }
+
+    res.send("Room booked successfully.");
+  } catch (error) {
+    res.status(500).send("Error booking room");
   }
-
-  const newBooking = { room, dateTime, username, email };
-  bookings.push(newBooking);
-  await writeFile(BOOKINGS_FILE, JSON.stringify(bookings, null, 2));
-
-  res.send("Room booked successfully.");
 });
 
 app.get("/bookings", async (req, res) => {
-  const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
-  res.send(bookings);
+  try {
+    const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
+    res.send(bookings);
+  } catch (error) {
+    res.status(500).send("Error retrieving bookings");
+  }
 });
 
 app.get("/available", async (req, res) => {
@@ -107,25 +170,28 @@ app.get("/available", async (req, res) => {
     return res.status(400).send("Room and date are required");
   }
 
-  const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
-  const filteredBookings = bookings.filter(booking => booking.room === room && booking.dateTime.startsWith(date));
-  const bookedTimes = filteredBookings.map(booking => booking.dateTime.split(" ")[1]);
+  try {
+    const bookings = JSON.parse(await readFile(BOOKINGS_FILE, "utf8"));
+    const filteredBookings = bookings.filter(booking => booking.room === room && booking.dateTime.startsWith(date));
+    const bookedTimes = filteredBookings.map(booking => booking.dateTime.split(" ")[1]);
 
-  const startHour = 7;
-  const endHour = 19;
-  const interval = 50;
-  const allTimes = [];
+    const startHour = 7;
+    const endHour = 19;
+    const allTimes = [];
 
-  for (let hour = startHour; hour <= endHour; hour++) {
-    const startTime = `${hour < 10 ? "0" : ""}${hour}:00`;
-    const endTime = `${hour < 10 ? "0" : ""}${hour}:50}`;
-    const timeSlot = `${startTime} - ${endTime}`;
-    if (!bookedTimes.includes(startTime)) {
-      allTimes.push(timeSlot);
+    for (let hour = startHour; hour <= endHour; hour++) {
+      const startTime = `${hour < 10 ? "0" : ""}${hour}:00`;
+      const endTime = `${hour < 10 ? "0" : ""}${hour}:50`;
+      const timeSlot = `${startTime} - ${endTime}`;
+      if (!bookedTimes.includes(startTime)) {
+        allTimes.push(timeSlot);
+      }
     }
-  }
 
-  res.send(allTimes);
+    res.send(allTimes);
+  } catch (error) {
+    res.status(500).send("Error retrieving available times");
+  }
 });
 
 app.get("/rooms", (req, res) => {
@@ -155,9 +221,14 @@ app.get("/shutdown", (req, res) => {
   });
 });
 
-// Add a root route handler to serve the index.html file
+// Serve the login page
+app.get("/login.html", (req, res) => {
+  res.sendFile(path.join(__dirname, 'room-booking', 'login.html'));
+});
+
+// Serve the index page
 app.get("/", (req, res) => {
-  res.sendFile(path.join("D:/group project 1/room_reservation_application/room/room-booking/index.html"));
+  res.sendFile(path.join(__dirname, 'room-booking', 'index.html'));
 });
 
 // Start the server
