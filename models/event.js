@@ -21,23 +21,17 @@ Event.init(
     },
     title: {
       type: DataTypes.STRING,
-      user_id: {
-        type: DataTypes.INTEGER, 
-        references: {
-          model: 'user', 
-          key: 'id'
-        }
-      },
+      allowNull: false, // Assuming title is required
     },
     description: {
       type: DataTypes.TEXT,
-      allowNull: true,
+      allowNull: true, // Allow null for description
     },
     reservation: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    user_id: { 
+    user_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -45,7 +39,7 @@ Event.init(
         key: 'id',
       },
     },
-    room_id: {  
+    room_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -56,6 +50,7 @@ Event.init(
   },
   {
     sequelize,
+    timestamps: true, // Add timestamps (createdAt, updatedAt)
     freezeTableName: true,
     underscored: true,
     modelName: 'event',

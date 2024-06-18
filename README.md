@@ -70,12 +70,20 @@ Admins can add rooms to the site, alter descriptions, and define room qualities.
 
 ## Tech Used
 
+this project utilizes npm and jquery libraries.
+specifically a nodemailer and a jquery calander handler in handlebars.
+
+Links:
+![nodemailer](https://www.npmjs.com/package/nodemailer)
+![jquery-calander-code-pen](https://codepen.io/acidhorse/pen/doqzLL)
+=======
 - Node.js and Express.js for backend development.
 - Handlebars.js for templating engine.
 - PostgreSQL with Sequelize ORM for database management.
 - Express-session and cookies for authentication.
 - Bootstrap for responsive UI design.
 - Deployed on Render for hosting.
+
 
 
 ## Features
