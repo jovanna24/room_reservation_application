@@ -1,4 +1,3 @@
-// User model associations
 const User = require('./User');
 const Event = require('./Event');
 const Room = require('./Room');
@@ -35,9 +34,9 @@ Room.belongsTo(User, {
 
 Room.hasMany(Event, {
   foreignKey: 'event_id',
-  as: 'event'
+  as: 'events'
 });
 
 
 
-module.exports = { User, Room, Event };
+module.exports = { User, Event, Room };
