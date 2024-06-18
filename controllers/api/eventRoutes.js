@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { Event } = require("../../models");
+const { Event } = require("../models");
 const withAuth = require('../../utils/auth');
 const { sendReminderEmail } = require('../../services/emailService');
 
