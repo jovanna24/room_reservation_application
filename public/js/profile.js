@@ -11,24 +11,26 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   
 
-  changeDate(); // Call changeDate function to initialize datepicker
+  changeDate(); 
 
   const newFormHandler = async (event) => {
     event.preventDefault();
-  
+    
+    const room_id = document.querySelector('#room-number').value.trim();
+    const title = document.querySelector('#event-title').value.trim();
     const description = document.querySelector('#event-info').value.trim();
     const contact = document.querySelector('#contact').value.trim();
     const host = document.querySelector('#host').value.trim();
     const reservation = document.querySelector('#reservation').value.trim(); 
     const sendReminder = document.querySelector('#sendReminder').checked;
   
-    console.log('Form data:', { description, contact, host, reservation, sendReminder });
+    console.log('Form data:', { room_id, title, description, contact, host, reservation, sendReminder });
 
     if (description && contact && host && reservation) {
       try {
         const response = await fetch('/api/events', {
           method: 'POST',
-          body: JSON.stringify({ description, contact, host, reservation, sendReminder }),
+          body: JSON.stringify({ title, room_id, description, contact, host, reservation, sendReminder }),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -59,16 +61,15 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
   port: 587,
-  secure: false, // Use `true` for port 465, `false` for all other ports
+  secure: false, 
   auth: {
     user: "maddison53@ethereal.email",
     pass: "jn7jnAPss4f63QBp6D",
   },
 });
 
-// async..await is not allowed in global scope, must use a wrapper
 async function main() {
-  // send mail with defined transport object
+
   const info = await transporter.sendMail({
     from: '"Maddison Foo Koch 👻" <maddison53@ethereal.email>', // sender address
     to: "bar@example.com, baz@example.com", // list of receivers
@@ -78,7 +79,6 @@ async function main() {
   });
 
   console.log("Message sent: %s", info.messageId);
-  // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
 }
 
 main().catch(console.error);

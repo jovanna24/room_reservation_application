@@ -20,8 +20,8 @@ Event.belongsTo(User, {
   as: 'user'
 });
 
-Event.hasMany(Room, {
-  foreignKey: 'event_id',
+Event.belongsTo(Room, {
+  foreignKey: 'room_id',
   onDelete: 'CASCADE',
   as: 'rooms'
 });
@@ -33,7 +33,7 @@ Room.belongsTo(User, {
 });
 
 Room.hasMany(Event, {
-  foreignKey: 'event_id',
+  foreignKey: 'room_id',
   as: 'events'
 });
 

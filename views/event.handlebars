@@ -8,13 +8,13 @@
 
 <div class="rooms">
     <h2>Rooms:</h2>
-    {{#each event.rooms as |room|}}
+    {{!-- {{#each event.rooms as |room|}} --}}
     <div class="room">
-    <p>Room Number: {{room.room_number}}</p>
-    <p>Available Resources: {{room.available_resources}}</p>
+    <p>Room Number: {{event.rooms.room_number}}</p>
+    <p>Available Resources: {{event.rooms.available_resources}}</p>
 </div>
 <hr/>
-{{/each}}
+{{!-- {{/each}} --}}
 </div>
 {{else}}
 <p>No event found.</p>

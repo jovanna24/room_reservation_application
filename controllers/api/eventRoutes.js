@@ -1,7 +1,7 @@
 const router = require("express").Router();
-const { Event } = require("../models");
-const withAuth = require('../utils/auth');
-const { sendReminderEmail } = require('../services/emailService');
+const { Event } = require("../../models");
+const withAuth = require('../../utils/auth');
+const { sendReminderEmail } = require('../../services/emailService');
 
 // get all events
 router.get('/', withAuth, async (req, res)=> {
@@ -33,13 +33,15 @@ router.get('/', withAuth, async (req, res)=> {
 
 router.post('/', withAuth, async (req, res) => {
   try {
-    const { description, contact, host, reservation } = req.body;
+    const { title, room_id, description, contact, host, reservation } = req.body;
 
     // Validate incoming data
-    if (!description || !contact || !host || !reservation) {
+    if (!title||!room_id||!description || !contact || !host || !reservation) {
       return res.status(400).json({ error: 'All fields are required!' });
     }
     const newEvent = await Event.create({
+      title, 
+      room_id,
       description,
       contact,
       host,
