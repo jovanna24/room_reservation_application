@@ -1,5 +1,5 @@
 const User = require('./User');
-const Event = require('./Event');
+const Event = require('./Events');
 const Room = require('./Room');
 
 User.hasMany(Event, {
