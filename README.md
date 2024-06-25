@@ -105,3 +105,11 @@ There is no licensing on this project
 - Austin Seger
 - Jovanna Jimenez
 - Meish Hamilton
+- Node.js: https://nodejs.org/docs/latest/api/
+- Express.js: https://expressjs.com/en/resources/middleware.html
+- Handlebars.js: https://handlebarsjs.com/
+- PostgreSQL: https://www.postgresql.org/docs/
+- Bootstrap: https://getbootstrap.com/
+- Nodemailer: https://nodemailer.com/usage/
+- Jquery Calendar in Handlebars: https://codepen.io/acidhorse/pen/doqzLL
+
